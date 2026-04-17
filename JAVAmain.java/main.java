@@ -1,6 +1,6 @@
 // Customer Feedback Analysis System
 
-// Feedback Class (State + Constructor)
+// Feedback Class 
 class Feedback {
     int score;
     String comment;
@@ -63,7 +63,7 @@ public class main {
         // Object creation (Constructor call)
         data[0] = new Feedback(5, "Great");
         data[1] = new Feedback(4, "Good");
-        data[2] = new Feedback(2, "Bad");
+        data[2] = new Feedback(4, "Good");
 
         // Analyzer 
         Analyzer obj = new Analyzer();
