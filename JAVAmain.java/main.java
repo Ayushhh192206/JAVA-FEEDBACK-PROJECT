@@ -1,79 +1,190 @@
-// Customer Feedback Analysis System
+// Customer Feedback Analysis System By Ayush kumar-10341
 
-// Feedback Class 
+
+interface Reportable {
+    void generateReport();
+}
+
+class InvalidScoreException extends Exception {
+    InvalidScoreException(String msg) {
+        super(msg);
+    }
+}
+
+abstract class User {
+    protected String name;
+
+    User(String name) {
+        this.name = name;
+    }
+
+    abstract void display();
+}
+
+
+class Customer extends User {
+
+    Customer(String name) {
+        super(name);
+    }
+
+
+    void display() {
+        System.out.println("Customer: " + name);
+    }
+}
+
+
 class Feedback {
-    int score;
-    String comment;
 
-    // Constructor using 'this' keyword
-    Feedback(int score, String comment) {
+    private int score;
+    private String comment;
+
+    Feedback(int score, String comment)
+            throws InvalidScoreException {
+
+        if(score < 1 || score > 5) {
+            throw new InvalidScoreException(
+                    "Score must be between 1 and 5");
+        }
+
         this.score = score;
         this.comment = comment;
     }
 
-    // Getter methods (Behavior)
-    int getScore() {
+    public int getScore() {
         return score;
     }
 
-    String getComment() {
+    public String getComment() {
         return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
 
-// Analyzer Class (Logic Processing)
-class Analyzer {
 
-    // how to calculate average
+class Analyzer implements Reportable {
+
+    final String COMPANY = "CustomerCare Ltd";
+
+
     double calculateAverage(Feedback[] feedbacks) {
+
         int sum = 0;
 
-        for (int i = 0; i < feedbacks.length; i++) {
+        for(int i = 0; i < feedbacks.length; i++) {
             sum += feedbacks[i].getScore();
         }
 
-        return (double) sum / feedbacks.length;
+        return (double)sum / feedbacks.length;
     }
 
-    // use of switch case
-    String getSentiment(double avg) {
-        int value = (int) avg;
+    double calculateAverage(int total, int count) {
+        return (double) total / count;
+    }
 
-        switch (value) {
-            case 5:
-                return "Excellent";
-            case 4:
-                return "Good";
-            case 3:
-                return "Average";
-            default:
-                return "Poor";
-        }
+    String getSentiment(double avg) {
+
+        if(avg >= 4.5)
+            return "Excellent";
+        else if(avg >= 3.5)
+            return "Good";
+        else if(avg >= 2.5)
+            return "Average";
+        else
+            return "Poor";
+    }
+
+    public void generateReport() {
+        System.out.println("Report Generated Successfully");
     }
 }
 
-// Main Class 
-public class main {
+public class Main {
 
     public static void main(String[] args) {
 
-        // Array of objects
-        Feedback[] data = new Feedback[3];
+        try {
 
-        // Object creation (Constructor call)
-        data[0] = new Feedback(5, "Great");
-        data[1] = new Feedback(4, "Good");
-        data[2] = new Feedback(4, "Good");
+            Customer c1 = new Customer("Ayush");
+            c1.display();
 
-        // Analyzer 
-        Analyzer obj = new Analyzer();
+            // Array of Objects
+            Feedback[] data = new Feedback[5];
 
-        // Logic used in this project
-        double avg = obj.calculateAverage(data);
-        String result = obj.getSentiment(avg);
+            data[0] = new Feedback(5, "Excellent Service");
+            data[1] = new Feedback(4, "Very Good");
+            data[2] = new Feedback(3, "Average");
+            data[3] = new Feedback(5, "Loved It");
+            data[4] = new Feedback(4, "Nice Experience");
 
-        // for Output
-        System.out.println("Average Rating: " + avg);
-        System.out.println("Customer Sentiment: " + result);
+            Analyzer obj = new Analyzer();
+
+            double avg =
+                    obj.calculateAverage(data);
+
+            String sentiment =
+                    obj.getSentiment(avg);
+
+            StringBuilder report =
+                    new StringBuilder();
+
+            report.append("\n===== CUSTOMER FEEDBACK REPORT =====\n");
+
+            for(Feedback f : data) {
+
+                report.append("Score: ")
+                      .append(f.getScore())
+                      .append(" | Comment: ")
+                      .append(f.getComment())
+                      .append("\n");
+            }
+
+            report.append("\nAverage Rating: ")
+                  .append(avg);
+
+            report.append("\nSentiment: ")
+                  .append(sentiment);
+
+            System.out.println(report);
+
+            obj.generateReport();
+
+            int roundedAvg = (int)avg;
+
+            switch(roundedAvg) {
+                case 5:
+                    System.out.println("Outstanding Feedback");
+                    break;
+
+                case 4:
+                    System.out.println("Good Feedback");
+                    break;
+
+                case 3:
+                    System.out.println("Average Feedback");
+                    break;
+
+                default:
+                    System.out.println("Needs Improvement");
+            }
+
+        }
+
+        catch(InvalidScoreException e) {
+            System.out.println("Error: "
+                    + e.getMessage());
+        }
+
+        catch(Exception e) {
+            System.out.println("Unexpected Error");
+        }
+
+        finally {
+            System.out.println("Program Executed Successfully");
+        }
     }
 }
